@@ -1,0 +1,30 @@
+name: Birthday Notifier
+
+on:
+  schedule:
+    - cron: '35 4 * * *' # Runs at 4:35 AM UTC daily (adjust the time if needed)
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    env:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}     # Pass the bot token from GitHub secrets
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}         # Pass the chat ID from GitHub secrets
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'  # Specify the Python version explicitly
+
+      - name: Install Dependencies
+        run: |
+          pip install python-telegram-bot
+          pip install requests  # For loading external resources if needed
+
+      - name: Run Birthday Notifier
+        run: python birthday_notifier.py
